@@ -75,6 +75,9 @@ junit.xml
 docker-compose.override.yaml
 docker-compose.override.yml
 
+# docker compose backup
+\#docker-compose.yml\#
+
 # meilisearch
 meilisearch
 meilisearch.exe
