@@ -11,9 +11,9 @@ export default function OpenAI({
   popover = false,
 }: TModelSelectProps) {
   const Menu = popover ? SelectDropDownPop : SelectDropDown;
-  // Display switch if models only include "gpt-3.5-turbo-1106" and "gpt-4-1106-preview"
+  // Display switch if models only include "gpt-3.5-turbo-0125" and "gpt-4-0125-preview"
   // Otherwise, display dropdown
-  const switchModels = ['gpt-3.5-turbo-1106', 'gpt-4-1106-preview'];
+  const switchModels = ['gpt-3.5-turbo-0125', 'gpt-4-0125-preview'];
   const gpt3Model = switchModels[0];
   const gpt4Model = switchModels[1];
 
