@@ -70,8 +70,4 @@ export const files = () => '/api/files';
 
 export const images = () => `${files()}/images`;
 
-// UCLA BEGIN EDIT
-// Add excel endpoint
-export const excel = () => `${files()}/excel`;
-// UCLA END EDIT
 export const avatar = () => `${images()}/avatar`;

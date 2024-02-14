@@ -4,7 +4,6 @@ const axios = require('axios');
 const { logger } = require('~/config');
 
 async function saveImageFromUrl(url, outputPath, outputFilename) {
-  console.log('here!');
   try {
     // Fetch the image from the URL
     const response = await axios({
