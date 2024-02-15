@@ -41,6 +41,8 @@ const AppService = async (app) => {
       fileStrategy,
       paths,
     };
+
+    return;
   }
 
   if (config.version !== Constants.CONFIG_VERSION) {
