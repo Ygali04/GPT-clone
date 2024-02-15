@@ -1,8 +1,11 @@
 // Portuguese phrases
+// file deepcode ignore NoHardcodedPasswords: No hardcoded values present in this file
+// file deepcode ignore HardcodedNonCryptoSecret: No hardcoded secrets present in this file
 
 export default {
   com_ui_examples: 'Exemplos',
   com_ui_new_chat: 'Novo Chat',
+  com_ui_happy_birthday: 'É meu primeiro aniversário!',
   com_ui_example_quantum_computing: 'Explique a computação quântica em termos simples',
   com_ui_example_10_year_old_b_day:
     'Tem alguma ideia criativa para o aniversário de uma criança de 10 anos?',
@@ -16,6 +19,7 @@ export default {
   com_ui_limitation_harmful_biased:
     'Pode ocasionalmente produzir instruções prejudiciais ou conteúdo tendencioso',
   com_ui_limitation_limited_2021: 'Conhecimento limitado do mundo e eventos após 2021',
+  com_ui_experimental: 'Experimental',
   com_ui_input: 'Entrada',
   com_ui_close: 'Fechar',
   com_ui_model: 'Modelo',
@@ -38,6 +42,8 @@ export default {
   com_ui_upload_invalid: 'Arquivo inválido para upload. Deve ser uma imagem que não exceda 2 MB',
   com_ui_cancel: 'Cancelar',
   com_ui_save: 'Salvar',
+  com_ui_save_submit: 'Salvar e Enviar',
+  com_user_message: 'Você',
   com_ui_copy_to_clipboard: 'Copiar para a área de transferência',
   com_ui_copied_to_clipboard: 'Copiado para a área de transferência',
   com_ui_regenerate: 'Regenerar',
@@ -45,7 +51,7 @@ export default {
   com_ui_edit: 'Editar',
   com_ui_success: 'Sucesso',
   com_ui_all: 'todos',
-  com_ui_clear: 'Limpar',
+  com_ui_clear: 'Excluir tudo',
   com_ui_revoke: 'Revogar',
   com_ui_revoke_info: 'Revogar todas as credenciais fornecidas pelo usuário',
   com_ui_confirm_action: 'Confirmar Ação',
@@ -122,7 +128,7 @@ export default {
   com_endpoint_bing_system_message_placeholder:
     'AVISO: O uso indevido deste recurso pode fazer com que você seja BANIDO de usar o Bing! Clique em \'System Message\' para obter instruções completas e a mensagem padrão se omitida, que é o preset \'Sydney\' que é considerado seguro.',
   com_endpoint_system_message: 'Mensagem do Sistema',
-  com_endpoint_message: 'Mensagem',
+  com_endpoint_message: 'Conversar com',
   com_endpoint_message_not_appendable: 'Edite sua mensagem ou Regenere.',
   com_endpoint_default_blank: 'padrão: em branco',
   com_endpoint_default_false: 'padrão: falso',
@@ -161,6 +167,10 @@ export default {
     'Número entre -2.0 e 2.0. Valores positivos penalizam novos tokens com base em sua frequência existente no texto até agora, diminuindo a probabilidade do modelo de repetir a mesma linha literalmente.',
   com_endpoint_openai_pres:
     'Número entre -2.0 e 2.0. Valores positivos penalizam novos tokens com base em se eles aparecem no texto até agora, aumentando a probabilidade do modelo de falar sobre novos tópicos.',
+  com_endpoint_openai_resend:
+    'Reenviar todas as imagens anteriormente anexadas. Observação: isso pode aumentar significativamente o custo em tokens e você pode enfrentar erros com muitos anexos de imagem.',
+  com_endpoint_openai_detail:
+    'A resolução para solicitações do Vision. "Low" é mais barata e rápida, "High" é mais detalhada e cara, e "Auto" escolherá automaticamente entre as duas com base na resolução da imagem.',
   com_endpoint_openai_custom_name_placeholder: 'Defina um nome personalizado para ChatGPT',
   com_endpoint_openai_prompt_prefix_placeholder:
     'Defina instruções personalizadas para incluir na Mensagem do Sistema. Padrão: nenhum',
@@ -176,6 +186,8 @@ export default {
   com_endpoint_frequency_penalty: 'Penalidade de Frequência',
   com_endpoint_presence_penalty: 'Penalidade de Presença',
   com_endpoint_plug_use_functions: 'Use Funções',
+  com_endpoint_plug_resend_images: 'Reenviar Imagens',
+  com_endpoint_plug_image_detail: 'Detalhes da Imagem',
   com_endpoint_plug_skip_completion: 'Pular Conclusão',
   com_endpoint_disabled_with_tools: 'desativado com ferramentas',
   com_endpoint_disabled_with_tools_placeholder: 'Desativado com Ferramentas Selecionadas',
@@ -265,9 +277,16 @@ export default {
     'Certifique-se de clicar em \'Criar e Continuar\' para dar pelo menos a função \'Usuário do Vertex AI\'. Por último, crie uma chave JSON para importar aqui.',
   com_nav_welcome_message: 'Como posso ajudá-lo hoje?',
   com_nav_auto_scroll: 'Auto-rolagem para o Mais Novo ao Abrir',
+  com_nav_modular_chat: 'Ativar a troca de Endpoints no meio da conversa',
+  com_nav_latex_parsing:
+    'Ativar análise de LaTeX nas mensagens. Ativado por padrão, mas pode afetar o desempenho em conversas mais longas ou em dispositivos móveis',
   com_nav_profile_picture: 'Foto de Perfil',
   com_nav_change_picture: 'Mudar foto',
   com_nav_plugin_store: 'Loja de plugins',
+  com_show_agent_settings: 'Mostrar Definições do Agente',
+  com_show_completion_settings: 'Mostrar Definições de Complemento',
+  com_hide_examples: 'Esconder Exemplos',
+  com_show_examples: 'Mostrar Exemplos',
   com_nav_plugin_search: 'Pesquisar plugins',
   com_nav_plugin_auth_error:
     'Houve um erro ao tentar autenticar este plugin. Por favor, tente novamente.',
@@ -285,20 +304,21 @@ export default {
   com_nav_theme_system: 'Sistema',
   com_nav_theme_dark: 'Escuro',
   com_nav_theme_light: 'Claro',
-  com_nav_clear_all_chats: 'Limpar todos os chats',
-  com_nav_confirm_clear: 'Confirmar Limpeza',
+  com_nav_user_name_display: 'Mostrar nome de usuário nas mensagens',
+  com_nav_clear_all_chats: 'Excluir todas as conversas?',
+  com_nav_confirm_clear: 'Confirmar Exclusão',
   com_nav_close_sidebar: 'Fechar barra lateral',
   com_nav_open_sidebar: 'Abrir barra lateral',
   com_nav_send_message: 'Enviar mensagem',
   com_nav_log_out: 'Sair',
   com_nav_user: 'USUÁRIO',
   com_nav_clear_conversation: 'Limpar conversas',
-  com_nav_clear_conversation_confirm_message:
-    'Tem certeza de que deseja limpar todas as conversas? Isso é irreversível.',
+  com_nav_clear_conversation_confirm_message: 'Limpar seu histórico de conversas- tem certeza?',
   com_nav_help_faq: 'Ajuda & FAQ',
   com_nav_settings: 'Configurações',
   com_nav_search_placeholder: 'Pesquisar mensagens',
   com_nav_setting_general: 'Geral',
+  com_nav_setting_beta: 'Recursos beta',
   com_nav_setting_data: 'Controles de dados',
   com_nav_setting_account: 'Conta',
   com_nav_language: 'Idioma',

@@ -48,6 +48,9 @@ bower_components/
 .floo
 .flooignore
 
+#config file
+librechat.yaml
+
 # Environment
 .npmrc
 .env*
@@ -66,10 +69,12 @@ src/style - official.css
 .DS_Store
 *.code-workspace
 .idea
+*.iml
 *.pem
 config.local.ts
 **/storageState.json
 junit.xml
+\#.env\#
 
 # docker override file
 docker-compose.override.yaml
@@ -91,3 +96,6 @@ auth.json
 
 # Emacs
 .#*
+
+# User uploads
+uploads/

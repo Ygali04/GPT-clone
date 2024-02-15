@@ -9,6 +9,7 @@ import {
 import * as t from '../types';
 import * as s from '../schemas';
 import * as m from '../types/mutations';
+import { defaultOrderQuery } from '../config';
 import * as dataService from '../data-service';
 import request from '../request';
 import { QueryKeys } from '../keys';
@@ -85,40 +86,6 @@ export const useGetConversationByIdQuery = (
   );
 };
 
-/* like above, but first try the convos query data */
-export const useGetConvoIdQuery = (
-  id: string,
-  config?: UseQueryOptions<s.TConversation>,
-): QueryObserverResult<s.TConversation> => {
-  const queryClient = useQueryClient();
-  return useQuery<s.TConversation>(
-    [QueryKeys.conversation, id],
-    () => {
-      const defaultQuery = () => dataService.getConversationById(id);
-
-      const convosQueryKey = [QueryKeys.allConversations, { pageNumber: '1', active: true }];
-      const convosQuery = queryClient.getQueryData<t.TGetConversationsResponse>(convosQueryKey);
-
-      if (!convosQuery) {
-        return defaultQuery();
-      }
-
-      const convo = convosQuery.conversations?.find((c) => c.conversationId === id);
-      if (convo) {
-        return convo;
-      }
-
-      return defaultQuery();
-    },
-    {
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      refetchOnMount: false,
-      ...config,
-    },
-  );
-};
-
 //This isn't ideal because its just a query and we're using mutation, but it was the only way
 //to make it work with how the Chat component is structured
 export const useGetConversationByIdMutation = (id: string): UseMutationResult<s.TConversation> => {
@@ -129,26 +96,6 @@ export const useGetConversationByIdMutation = (id: string): UseMutationResult<s.
       queryClient.invalidateQueries([QueryKeys.conversation, id]);
     },
   });
-};
-
-export const useUpdateConversationMutation = (
-  id: string,
-): UseMutationResult<
-  t.TUpdateConversationResponse,
-  unknown,
-  t.TUpdateConversationRequest,
-  unknown
-> => {
-  const queryClient = useQueryClient();
-  return useMutation(
-    (payload: t.TUpdateConversationRequest) => dataService.updateConversation(payload),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries([QueryKeys.conversation, id]);
-        queryClient.invalidateQueries([QueryKeys.allConversations]);
-      },
-    },
-  );
 };
 
 export const useUpdateMessageMutation = (
@@ -176,26 +123,6 @@ export const useUpdateUserKeysMutation = (): UseMutationResult<
   });
 };
 
-export const useDeleteConversationMutation = (
-  id?: string,
-): UseMutationResult<
-  t.TDeleteConversationResponse,
-  unknown,
-  t.TDeleteConversationRequest,
-  unknown
-> => {
-  const queryClient = useQueryClient();
-  return useMutation(
-    (payload: t.TDeleteConversationRequest) => dataService.deleteConversation(payload),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries([QueryKeys.conversation, id]);
-        queryClient.invalidateQueries([QueryKeys.allConversations]);
-      },
-    },
-  );
-};
-
 export const useClearConversationsMutation = (): UseMutationResult<unknown> => {
   const queryClient = useQueryClient();
   return useMutation(() => dataService.clearAllConversations(), {
@@ -210,6 +137,14 @@ export const useRevokeUserKeyMutation = (name: string): UseMutationResult<unknow
   return useMutation(() => dataService.revokeUserKey(name), {
     onSuccess: () => {
       queryClient.invalidateQueries([QueryKeys.name]);
+      if (name === s.EModelEndpoint.assistants) {
+        queryClient.invalidateQueries([QueryKeys.assistants, defaultOrderQuery]);
+        queryClient.invalidateQueries([QueryKeys.assistantDocs]);
+        queryClient.invalidateQueries([QueryKeys.assistants]);
+        queryClient.invalidateQueries([QueryKeys.assistant]);
+        queryClient.invalidateQueries([QueryKeys.actions]);
+        queryClient.invalidateQueries([QueryKeys.tools]);
+      }
     },
   });
 };
@@ -219,6 +154,12 @@ export const useRevokeAllUserKeysMutation = (): UseMutationResult<unknown> => {
   return useMutation(() => dataService.revokeAllUserKeys(), {
     onSuccess: () => {
       queryClient.invalidateQueries([QueryKeys.name]);
+      queryClient.invalidateQueries([QueryKeys.assistants, defaultOrderQuery]);
+      queryClient.invalidateQueries([QueryKeys.assistantDocs]);
+      queryClient.invalidateQueries([QueryKeys.assistants]);
+      queryClient.invalidateQueries([QueryKeys.assistant]);
+      queryClient.invalidateQueries([QueryKeys.actions]);
+      queryClient.invalidateQueries([QueryKeys.tools]);
     },
   });
 };
@@ -228,7 +169,7 @@ export const useGetConversationsQuery = (
   config?: UseQueryOptions<t.TGetConversationsResponse>,
 ): QueryObserverResult<t.TGetConversationsResponse> => {
   return useQuery<t.TGetConversationsResponse>(
-    [QueryKeys.allConversations, { pageNumber, active: true }],
+    [QueryKeys.allConversations],
     () => dataService.getConversations(pageNumber),
     {
       refetchOnReconnect: false,
@@ -351,7 +292,7 @@ export const useLoginUserMutation = (): UseMutationResult<
       localStorage.removeItem('lastSelectedModel');
       localStorage.removeItem('lastSelectedTools');
       localStorage.removeItem('filesToDelete');
-      localStorage.removeItem('lastAssistant');
+      // localStorage.removeItem('lastAssistant');
     },
   });
 };

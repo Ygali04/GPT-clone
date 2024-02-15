@@ -1,20 +1,26 @@
+const { EModelEndpoint } = require('librechat-data-provider');
 const { sendMessage, sendError, countTokens, isEnabled } = require('~/server/utils');
 const { saveMessage, getConvo, getConvoTitle } = require('~/models');
 const clearPendingReq = require('~/cache/clearPendingReq');
 const abortControllers = require('./abortControllers');
 const { redactMessage } = require('~/config/parsers');
 const spendTokens = require('~/models/spendTokens');
+const { abortRun } = require('./abortRun');
 const { logger } = require('~/config');
 
 async function abortMessage(req, res) {
-  let { abortKey, conversationId } = req.body;
+  let { abortKey, conversationId, endpoint } = req.body;
 
   if (!abortKey && conversationId) {
     abortKey = conversationId;
   }
 
+  if (endpoint === EModelEndpoint.assistants) {
+    return await abortRun(req, res);
+  }
+
   if (!abortControllers.has(abortKey) && !res.headersSent) {
-    return res.status(404).send({ message: 'Request not found' });
+    return res.status(204).send({ message: 'Request not found' });
   }
 
   const { abortController } = abortControllers.get(abortKey);
@@ -25,6 +31,8 @@ async function abortMessage(req, res) {
   if (res.headersSent && finalEvent) {
     return sendMessage(res, finalEvent);
   }
+
+  res.setHeader('Content-Type', 'application/json');
 
   res.send(JSON.stringify(finalEvent));
 }

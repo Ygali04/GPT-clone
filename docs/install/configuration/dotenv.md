@@ -1,7 +1,7 @@
 ---
 title: ⚙️ Environment Variables
 description: Comprehensive guide for configuring your application's environment with the `.env` file. This document is your one-stop resource for understanding and customizing the environment variables that will shape your application's behavior in different contexts.
-weight: -10
+weight: -11
 ---
 
 # .env File Configuration
@@ -9,15 +9,7 @@ Welcome to the comprehensive guide for configuring your application's environmen
 
 While the default settings provide a solid foundation for a standard `docker` installation, delving into this guide will unveil the full potential of LibreChat. This guide empowers you to tailor LibreChat to your precise needs. Discover how to adjust language model availability, integrate social logins, manage the automatic moderation system, and much more. It's all about giving you the control to fine-tune LibreChat for an optimal user experience.
 
-**If you use docker, you should rebuild the docker image each time you update your environment variables**
-
-Rebuild command:
-```bash
-npm run update:docker
-
-# OR, if you don't have npm
-docker-compose build --no-cache
-```
+> **Reminder: Please restart LibreChat for the configuration changes to take effect**
 
 Alternatively, you can create a new file named `docker-compose.override.yml` in the same directory as your main `docker-compose.yml` file for LibreChat, where you can set your .env variables as needed under `environment`, or modify the default configuration provided by the main `docker-compose.yml`, without the need to directly edit or duplicate the whole file.
 
@@ -132,7 +124,7 @@ In this section you can configure the endpoints and models selection, their API 
 - `PROXY` is to be used by all endpoints (leave blank by default)
 
 ```bash
-ENDPOINTS=openAI,azureOpenAI,bingAI,chatGPTBrowser,google,gptPlugins,anthropic
+ENDPOINTS=openAI,assistants,azureOpenAI,bingAI,chatGPTBrowser,google,gptPlugins,anthropic
 PROXY=
 ```
 
@@ -174,6 +166,20 @@ AZURE_OPENAI_API_EMBEDDINGS_DEPLOYMENT_NAME=
 
 - Identify the available models, separated by commas *without spaces*. The first will be default. Leave it blank or as is to use internal settings.
 
+- **The base URL for Azure OpenAI API requests can be dynamically configured.**
+
+```bash
+# .env file
+AZURE_OPENAI_BASEURL=https://${INSTANCE_NAME}.openai.azure.com/openai/deployments/${DEPLOYMENT_NAME}
+
+# Cloudflare example
+AZURE_OPENAI_BASEURL=https://gateway.ai.cloudflare.com/v1/ACCOUNT_TAG/GATEWAY/azure-openai/${INSTANCE_NAME}/${DEPLOYMENT_NAME}
+```
+- Sets the base URL for Azure OpenAI API requests.
+- Can include `${INSTANCE_NAME}` and `${DEPLOYMENT_NAME}` placeholders or specific credentials.
+- Example: "https://gateway.ai.cloudflare.com/v1/ACCOUNT_TAG/GATEWAY/azure-openai/${INSTANCE_NAME}/${DEPLOYMENT_NAME}"
+- [More info about `AZURE_OPENAI_BASEURL` here](./ai_setup.md#using-a-specified-base-url-with-azure)
+
 > Note: as deployment names can't have periods, they will be removed when the endpoint is generated.
 
 ```bash
@@ -193,6 +199,23 @@ AZURE_USE_MODEL_AS_DEPLOYMENT_NAME=TRUE
 
 ```bash 
 PLUGINS_USE_AZURE="true"
+```
+** Generate images with Azure OpenAI Service**
+
+- For DALL-E-3:
+
+```bash
+DALLE3_AZURE_API_VERSION=the-api-version # e.g.: 2023-12-01-preview
+DALLE3_BASEURL=https://<AZURE_OPENAI_API_INSTANCE_NAME>.openai.azure.com/openai/deployments/<DALLE3_DEPLOYMENT_NAME>/
+DALLE3_API_KEY=your-azure-api-key-for-dall-e-3
+```
+
+- For DALL-E-2:
+
+```bash
+DALLE2_AZURE_API_VERSION=the-api-version # e.g.: 2023-12-01-preview
+DALLE2_BASEURL=https://<AZURE_OPENAI_API_INSTANCE_NAME>.openai.azure.com/openai/deployments/<DALLE2_DEPLOYMENT_NAME>/
+DALLE2_API_KEY=your-azure-api-key-for-dall-e-2
 ```
 
 ### BingAI
@@ -214,7 +237,7 @@ BINGAI_HOST=
 ### ChatGPT
 see: [ChatGPT Free Access token](../configuration/ai_setup.md#chatgptbrowser)
 
-> **Warning**: To use this endpoint you'll have to set up your own reverse proxy. Here is the installation guide to deploy your own (based on [PandoraNext](https://github.com/pandora-next/deploy)): **[PandoraNext Deployment Guide](../../features/pandoranext.md)**
+> **Warning**: To use this endpoint you'll have to set up your own reverse proxy. Here is the installation guide to deploy your own (based on [Ninja](https://github.com/gngpp/ninja)): **[Ninja Deployment Guide](../../features/ninja.md)**
 
 ```bash
 CHATGPT_REVERSE_PROXY=<YOUR-REVERSE-PROXY>
@@ -265,6 +288,13 @@ GOOGLE_MODELS=gemini-pro,gemini-pro-vision,chat-bison,chat-bison-32k,codechat-bi
 OPENAI_API_KEY=user_provided
 ```
 
+- You can specify which organization to use for each API request to OpenAI. However, it is not required if you are only part of a single organization or intend to use your default organization. You can check your [default organization here](https://platform.openai.com/account/api-keys). This can also help you limit your LibreChat instance from allowing API keys outside of your organization to be used, as a mismatch between key and organization will throw an API error.
+
+```bash
+# Optional
+OPENAI_ORGANIZATION=org-Y6rfake63IhVorgqfPQmGmgtId
+```
+
 - Set to true to enable debug mode for the OpenAI endpoint
 
 ```bash
@@ -276,7 +306,7 @@ DEBUG_OPENAI=false
     - Leave it blank or commented out to use internal settings.
 
 ```bash
-OPENAI_MODELS=gpt-3.5-turbo-1106,gpt-4-1106-preview,gpt-3.5-turbo,gpt-3.5-turbo-16k,gpt-3.5-turbo-0301,text-davinci-003,gpt-4,gpt-4-0314,gpt-4-0613
+OPENAI_MODELS=gpt-3.5-turbo-0125,gpt-3.5-turbo-0301,gpt-3.5-turbo,gpt-4,gpt-4-0613,gpt-4-vision-preview,gpt-3.5-turbo-0613,gpt-3.5-turbo-16k-0613,gpt-4-0125-preview,gpt-4-turbo-preview,gpt-4-1106-preview,gpt-3.5-turbo-1106,gpt-3.5-turbo-instruct,gpt-3.5-turbo-instruct-0914,gpt-3.5-turbo-16k
 ```
 
 - Titling is enabled by default when initiating a conversation.
@@ -302,11 +332,13 @@ OPENAI_TITLE_MODEL=gpt-3.5-turbo
 OPENAI_SUMMARIZE=true
 ```
 
-> **Not yet implemented**: this will be a conversation option enabled by default to save users on tokens. We are using the ConversationSummaryBufferMemory method to summarize messages. To learn more about this, see this article: [https://www.pinecone.io/learn/series/langchain/langchain-conversational-memory/](https://www.pinecone.io/learn/series/langchain/langchain-conversational-memory/)
+> **Experimental**: We are using the ConversationSummaryBufferMemory method to summarize messages. To learn more about this, see this article: [https://www.pinecone.io/learn/series/langchain/langchain-conversational-memory/](https://www.pinecone.io/learn/series/langchain/langchain-conversational-memory/)
 
 - Reverse proxy settings for OpenAI:
     - see: [LiteLLM](./litellm.md) 
     - see also: [Free AI APIs](./free_ai_apis.md#nagaai)
+
+**Important**: As of v0.6.6, it's recommend you use the `librechat.yaml` [Configuration file (guide here)](./custom_config.md) to add Reverse Proxies as separate endpoints.
 
 ```bash
 OPENAI_REVERSE_PROXY=
@@ -317,6 +349,37 @@ OPENAI_REVERSE_PROXY=
 ```bash
 OPENAI_FORCE_PROMPT=true
 ```
+
+### Assistants
+
+- The [Assistants API by OpenAI](https://platform.openai.com/docs/assistants/overview) has a dedicated endpoint.
+- To get your OpenAI API key, you need to:
+    - Go to [https://platform.openai.com/account/api-keys](https://platform.openai.com/account/api-keys)
+    - Create an account or log in with your existing one
+    - Add a payment method to your account (this is not free, sorry 😬)
+    - Copy your secret key (sk-...) to `ASSISTANTS_API_KEY`
+
+- Leave `ASSISTANTS_API_KEY=` blank to disable this endpoint
+- Set `ASSISTANTS_API_KEY=` to `user_provided` to allow users to provide their own API key from the WebUI
+
+- Customize the available models, separated by commas, **without spaces**.
+    - The first will be default.
+    - Leave it blank or commented out to use internal settings:
+        - The models list will be fetched from OpenAI but only Assistants-API-compatible models will be shown; at the time of writing, they are as shown in the example below.
+
+```bash
+ASSISTANTS_MODELS=gpt-3.5-turbo-0125,gpt-3.5-turbo-16k-0613,gpt-3.5-turbo-16k,gpt-3.5-turbo,gpt-4,gpt-4-0314,gpt-4-32k-0314,gpt-4-0613,gpt-3.5-turbo-0613,gpt-3.5-turbo-1106,gpt-4-0125-preview,gpt-4-turbo-preview,gpt-4-1106-preview
+```
+
+- If necessary, you can also set an alternate base URL instead of the official one with `ASSISTANTS_BASE_URL`, which is similar to the OpenAI counterpart `OPENAI_REVERSE_PROXY`
+
+```bash
+ASSISTANTS_BASE_URL=http://your-alt-baseURL:3080/
+```
+
+- If you have previously set the [`ENDPOINTS` value in your .env file](#endpoints), you will need to add the value `assistants`
+
+- There is additional, optional configuration, depending on your needs, such as disabling the assistant builder UI, and determining which assistants can be used, that are available via the [`librechat.yaml` custom config file](./custom_config.md#assistants-endpoint-object-structure).
 
 ### OpenRouter
 See [OpenRouter](./free_ai_apis.md#openrouter-preferred) for more info.
@@ -340,7 +403,7 @@ Here are some useful documentation about plugins:
 - Identify the available models, separated by commas **without spaces**. The first model in the list will be set as default. Leave it blank or commented out to use internal settings.
 
 ```bash
-PLUGIN_MODELS=gpt-3.5-turbo,gpt-3.5-turbo-16k,gpt-3.5-turbo-0301,gpt-4,gpt-4-0314,gpt-4-0613
+PLUGIN_MODELS=gpt-4,gpt-4-turbo-preview,gpt-4-0125-preview,gpt-4-1106-preview,gpt-4-0613,gpt-3.5-turbo,gpt-3.5-turbo-0125,gpt-3.5-turbo-1106,gpt-3.5-turbo-0613
 ```
 
 - Set to false or comment out to disable debug mode for plugins
@@ -373,35 +436,58 @@ AZURE_AI_SEARCH_SEARCH_OPTION_TOP=
 AZURE_AI_SEARCH_SEARCH_OPTION_SELECT=
 ```
 
-#### DALL-E 3:
-- OpenAI API key for DALL-E / DALL-E-3. Leave commented out to have the user provide their own key when installing the plugin. If you want to provide your own key for all users you can uncomment this line and add your OpenAI API key here.
+#### DALL-E:
+
+**Note:** Make sure the `gptPlugins` endpoint is set in the [`ENDPOINTS`](#endpoints) environment variable if it was configured before.
+
+**API Keys:**
+- `DALLE_API_KEY`: This environment variable is intended for storing the OpenAI API key that grants access to both DALL-E 2 and DALL-E 3 services. Typically, this key should be kept private. If you are distributing a plugin or software that integrates with DALL-E, you may choose to leave this commented out, requiring the end user to input their own API key. If you have a shared API key you want to distribute with your software (not recommended for security reasons), you can uncomment this and provide the key.
 
 ```bash
-# DALLE_API_KEY=
+DALLE_API_KEY=
 ```
 
-- For customization of the DALL-E-3 System prompt, uncomment the following, and provide your own prompt. **(Advanced)** 
-    - See official prompt for reference: **[DALL-E System Prompt](https://github.com/spdustin/ChatGPT-AutoExpert/blob/main/_system-prompts/dall-e.md)**
+- `DALLE3_API_KEY` and `DALLE2_API_KEY`: These are similar to the above but are specific to each version of DALL-E. They allow for separate keys for DALL-E 2 and DALL-E 3, providing flexibility if you have different access credentials or subscription levels for each service.
 
 ```bash
-DALLE3_SYSTEM_PROMPT="Your System Prompt here"
+DALLE3_API_KEY=
+DALLE2_API_KEY=
 ```
 
-- DALL-E Proxy settings. This is separate from its OpenAI counterpart for customization purposes **(Advanced)** 
+**System Prompts:**
+- `DALLE3_SYSTEM_PROMPT` and `DALLE2_SYSTEM_PROMPT`: These variables allow users to set system prompts that can preconfigure or guide the image generation process for DALL-E 3 and DALL-E 2, respectively. Use these to set default prompts or special instructions that affect how the AI interprets the user's input prompts.
 
-> Reverse proxy settings, changes the baseURL for the DALL-E-3 API Calls
-> The URL must match the "url/v1," pattern, the "openai" suffix is also allowed.
-> ```
-> Examples:
->   - https://open.ai/v1
->   - https://open.ai/v1/ACCOUNT/GATEWAY/openai
->   - https://open.ai/v1/hi/openai
-> ```
+```bash
+DALLE3_SYSTEM_PROMPT="Your DALL-E-3 System Prompt here"
+DALLE2_SYSTEM_PROMPT="Your DALL-E-2 System Prompt here"
+```
+
+**Reverse Proxy Settings:**
+- `DALLE_REVERSE_PROXY`: This setting enables the specification of a reverse proxy for DALL-E API requests. This can be useful for routing traffic through a specific server, potentially for purposes like caching, logging, or adding additional layers of security. Ensure that the URL follows the required pattern and is appropriately configured to handle DALL-E requests.
 
 ```bash
 DALLE_REVERSE_PROXY=
 ```
 
+**Base URLs:**
+- `DALLE3_BASEURL` and `DALLE2_BASEURL`: These variables define the base URLs for DALL-E 3 and DALL-E 2 API endpoints, respectively. These might need to be set if you are using a custom proxy or a specific regional endpoint provided by OpenAI.
+
+```bash
+DALLE3_BASEURL=
+DALLE2_BASEURL=
+```
+
+**Azure OpenAI Integration (Optional):**
+- `DALLE3_AZURE_API_VERSION` and `DALLE2_AZURE_API_VERSION`: If you are using Azure's OpenAI service to access DALL-E, these environment variables specify the API version for DALL-E 3 and DALL-E 2, respectively. Azure may have specific API version strings that need to be set to ensure compatibility with their services.
+
+```bash
+DALLE3_AZURE_API_VERSION=
+DALLE2_AZURE_API_VERSION=
+```
+
+---
+
+Remember to replace placeholder text such as "Your DALL-E-3 System Prompt here" with actual prompts or instructions and provide your actual API keys if you choose to include them directly in the file (though managing sensitive keys outside of the codebase is a best practice). Always review and respect OpenAI's usage policies when embedding API keys in software.
 > Note: if you have PROXY set, it will be used for DALL-E calls also, which is universal for the app
 
 #### Google Search
@@ -465,12 +551,6 @@ For the API server to connect to the search server. Replace '0.0.0.0' with 'meil
 
 ```bash
 MEILI_HOST=http://0.0.0.0:7700
-```
-
-MeiliSearch HTTP Address, mainly for docker-compose to expose the search server. Replace '0.0.0.0' with 'meilisearch' if serving MeiliSearch with docker-compose.
-
-```bash
-MEILI_HTTP_ADDR=0.0.0.0:7700
 ```
 
 This master key must be at least 16 bytes, composed of valid UTF-8 characters. MeiliSearch will throw an error and refuse to launch if no master key is provided or if it is under 16 bytes. MeiliSearch will suggest a secure autogenerated master key. This is a ready made secure key for docker-compose, you can replace it with your own.
@@ -607,7 +687,7 @@ see: **[User/Auth System](../configuration/user_auth_system.md)**
 
 ```bash
 ALLOW_EMAIL_LOGIN=true
-ALLOW_REGISTRATION=true       
+ALLOW_REGISTRATION=true
 ALLOW_SOCIAL_LOGIN=false
 ALLOW_SOCIAL_REGISTRATION=false
 ```

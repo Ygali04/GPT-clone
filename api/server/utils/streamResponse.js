@@ -1,6 +1,8 @@
 const crypto = require('crypto');
+const { parseConvo } = require('librechat-data-provider');
 const { saveMessage, getMessages } = require('~/models/Message');
 const { getConvo } = require('~/models/Conversation');
+const { logger } = require('~/config');
 
 /**
  * Sends error data in Server Sent Events format and ends the response.
@@ -14,12 +16,12 @@ const handleError = (res, message) => {
 
 /**
  * Sends message data in Server Sent Events format.
- * @param {object} res - - The server response.
- * @param {string} message - The message to be sent.
+ * @param {Express.Response} res - - The server response.
+ * @param {string | Object} message - The message to be sent.
  * @param {'message' | 'error' | 'cancel'} event - [Optional] The type of event. Default is 'message'.
  */
 const sendMessage = (res, message, event = 'message') => {
-  if (message.length === 0) {
+  if (typeof message === 'string' && message.length === 0) {
     return;
   }
   res.write(`event: ${event}\ndata: ${JSON.stringify(message)}\n\n`);
@@ -65,12 +67,21 @@ const sendError = async (res, options, callback) => {
 
   if (!errorMessage.error) {
     const requestMessage = { messageId: parentMessageId, conversationId };
-    const query = await getMessages(requestMessage);
+    let query = [],
+      convo = {};
+    try {
+      query = await getMessages(requestMessage);
+      convo = await getConvo(user, conversationId);
+    } catch (err) {
+      logger.error('[sendError] Error retrieving conversation data:', err);
+      convo = parseConvo(errorMessage);
+    }
+
     return sendMessage(res, {
       final: true,
       requestMessage: query?.[0] ? query[0] : requestMessage,
       responseMessage: errorMessage,
-      conversation: await getConvo(user, conversationId),
+      conversation: convo,
     });
   }
 

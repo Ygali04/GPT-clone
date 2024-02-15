@@ -1,4 +1,5 @@
 import { EModelEndpoint } from 'librechat-data-provider';
+import UnknownIcon from '~/components/Chat/Menus/Endpoints/UnknownIcon';
 import {
   AzureMinimalIcon,
   OpenAIMinimalIcon,
@@ -6,7 +7,9 @@ import {
   PluginMinimalIcon,
   BingAIMinimalIcon,
   GoogleMinimalIcon,
+  CustomMinimalIcon,
   AnthropicIcon,
+  Sparkles,
 } from '~/components/svg';
 import { cn } from '~/utils';
 import { IconProps } from '~/common';
@@ -32,9 +35,24 @@ const MinimalIcon: React.FC<IconProps> = (props) => {
       icon: <AnthropicIcon className="icon-md shrink-0 dark:text-white" />,
       name: props.modelLabel || 'Claude',
     },
+    [EModelEndpoint.custom]: {
+      icon: <CustomMinimalIcon />,
+      name: 'Custom',
+    },
     [EModelEndpoint.bingAI]: { icon: <BingAIMinimalIcon />, name: 'BingAI' },
     [EModelEndpoint.chatGPTBrowser]: { icon: <LightningIcon />, name: 'ChatGPT' },
-    default: { icon: <OpenAIMinimalIcon />, name: 'UNKNOWN' },
+    [EModelEndpoint.assistants]: { icon: <Sparkles className="icon-sm" />, name: 'Assistant' },
+    default: {
+      icon: (
+        <UnknownIcon
+          iconURL={props.iconURL}
+          endpoint={endpoint}
+          className="icon-sm"
+          context="nav"
+        />
+      ),
+      name: endpoint,
+    },
   };
 
   const { icon, name } = endpointIcons[endpoint] ?? endpointIcons.default;

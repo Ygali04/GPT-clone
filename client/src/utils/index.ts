@@ -1,9 +1,14 @@
+export * from './map';
 export * from './json';
+export * from './files';
+export * from './latex';
+export * from './convos';
 export * from './presets';
+export * from './content';
 export * from './languages';
+export * from './endpoints';
 export { default as cn } from './cn';
 export { default as buildTree } from './buildTree';
-export { default as mapEndpoints } from './mapEndpoints';
 export { default as getLoginError } from './getLoginError';
 export { default as cleanupPreset } from './cleanupPreset';
 export { default as validateIframe } from './validateIframe';
