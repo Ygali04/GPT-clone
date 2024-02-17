@@ -6,6 +6,7 @@ const router = express.Router();
 const { setAuthTokens } = require('~/server/services/AuthService');
 const { loginLimiter, checkBan } = require('~/server/middleware');
 const { logger } = require('~/config');
+const checkEmailValidity = require('~/server/utils/checkEmailValidity');
 
 const domains = {
   client: process.env.DOMAIN_CLIENT,
@@ -20,6 +21,15 @@ const oauthHandler = async (req, res) => {
     if (req.banned) {
       return;
     }
+
+    // Check if email is valid as per validEmails.csv
+    const emailIsValid = await checkEmailValidity(req);
+    if (!emailIsValid) {
+      logger.error('Email not valid. Redirecting to login.', req.email);
+      res.redirect(`${domains.client}/login`);
+      return;
+    }
+
     await setAuthTokens(req.user._id, res);
     res.redirect(domains.client);
   } catch (err) {
