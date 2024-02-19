@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { EModelEndpoint, eModelEndpointSchema } from './schemas';
 import { fileConfigSchema } from './file-config';
 import { FileSources } from './types/files';
+const SUPPORT_RETRIEVAL = false;
 
 export const defaultSocialLogins = ['google', 'facebook', 'openid', 'github', 'discord'];
 
@@ -184,13 +185,17 @@ export const defaultModels = {
   ],
 };
 
-export const supportsRetrieval = new Set([
-  'gpt-3.5-turbo-0125',
-  'gpt-4-0125-preview',
-  'gpt-4-turbo-preview',
-  'gpt-4-1106-preview',
-  'gpt-3.5-turbo-1106',
-]);
+// Don't support retrieval for now
+
+export const supportsRetrieval = SUPPORT_RETRIEVAL
+  ? new Set([
+    'gpt-3.5-turbo-0125',
+    'gpt-4-0125-preview',
+    'gpt-4-turbo-preview',
+    'gpt-4-1106-preview',
+    'gpt-3.5-turbo-1106',
+  ])
+  : new Set([]);
 
 export const EndpointURLs: { [key in EModelEndpoint]: string } = {
   [EModelEndpoint.openAI]: `/api/ask/${EModelEndpoint.openAI}`,
