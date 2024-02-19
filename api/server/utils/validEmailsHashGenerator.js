@@ -11,8 +11,8 @@ const fs = require('fs');
 const readline = require('readline');
 const crypto = require('crypto');
 
-const inputEmailsPath = './api/server/utils/emails/validEmailsUnhashed.csv';
-const validEmailsPath = './api/server/utils/emails/validEmails.csv';
+const inputEmailsPath = './emails/validEmailsUnhashed.csv';
+const validEmailsPath = './emails/validEmails.csv';
 
 const hashEmail = (email) => {
   const hash = crypto.createHash('sha256');
@@ -35,7 +35,9 @@ readInterface.on('line', (line) => {
   }
   const hashedEmail = hashEmail(line);
   fs.appendFile(validEmailsPath, `${hashedEmail}\n`, (err) => {
-    if (err) {throw err;}
+    if (err) {
+      throw err;
+    }
   }); // Append the hashed email to validEmails.csv
 });
 
