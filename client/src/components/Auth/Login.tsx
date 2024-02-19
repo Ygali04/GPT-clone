@@ -96,6 +96,14 @@ function Login() {
         <h1 className="mb-4 text-center text-3xl font-semibold">
           {localize('com_auth_welcome_back')}
         </h1>
+        <a
+          href="https://docs.librechat.ai/index.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="my-4 text-center text-sm font-light text-gray-700 underline"
+        >
+          Powered by LibreChat
+        </a>
         {error && (
           <div
             className="relative mt-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
