@@ -11,7 +11,7 @@ const {
   mergeFileConfig,
 } = require('librechat-data-provider');
 const { convertToWebP, resizeAndConvert } = require('~/server/services/Files/images');
-const { initializeClient } = require('~/server/services/Endpoints/assistant');
+const { initializeClient } = require('~/server/services/Endpoints/assistants');
 const { createFile, updateFileUsage, deleteFiles } = require('~/models/File');
 const { isEnabled, determineFileType } = require('~/server/utils');
 const { LB_QueueAsyncCall } = require('~/server/utils/queue');
@@ -147,7 +147,11 @@ const processDeleteRequest = async ({ req, files }) => {
 const processFileURL = async ({ fileStrategy, userId, URL, fileName, basePath, context }) => {
   const { saveURL, getFileURL } = getStrategyFunctions(fileStrategy);
   try {
-    const { bytes, type, dimensions } = await saveURL({ userId, URL, fileName, basePath });
+    const {
+      bytes = 0,
+      type = '',
+      dimensions = {},
+    } = (await saveURL({ userId, URL, fileName, basePath })) || {};
     const filepath = await getFileURL({ fileName: `${userId}/${fileName}`, basePath });
     return await createFile(
       {
@@ -184,8 +188,15 @@ const processFileURL = async ({ fileStrategy, userId, URL, fileName, basePath, c
 const processImageFile = async ({ req, res, file, metadata }) => {
   const source = req.app.locals.fileStrategy;
   const { handleImageUpload } = getStrategyFunctions(source);
-  const { file_id, temp_file_id } = metadata;
-  const { filepath, bytes, width, height } = await handleImageUpload(req, file);
+  const { file_id, temp_file_id, endpoint } = metadata;
+
+  const { filepath, bytes, width, height } = await handleImageUpload({
+    req,
+    file,
+    file_id,
+    endpoint,
+  });
+
   const result = await createFile(
     {
       user: req.user.id,
@@ -253,7 +264,7 @@ const uploadImageBuffer = async ({ req, context }) => {
  */
 const processFileUpload = async ({ req, res, file, metadata }) => {
   const isAssistantUpload = metadata.endpoint === EModelEndpoint.assistants;
-  const source = isAssistantUpload ? FileSources.openai : req.app.locals.fileStrategy;
+  const source = isAssistantUpload ? FileSources.openai : FileSources.vectordb;
   const { handleFileUpload } = getStrategyFunctions(source);
   const { file_id, temp_file_id } = metadata;
 
@@ -263,7 +274,12 @@ const processFileUpload = async ({ req, res, file, metadata }) => {
     ({ openai } = await initializeClient({ req }));
   }
 
-  const { id, bytes, filename, filepath } = await handleFileUpload(req, file, openai);
+  const { id, bytes, filename, filepath, embedded } = await handleFileUpload({
+    req,
+    file,
+    file_id,
+    openai,
+  });
 
   if (isAssistantUpload && !metadata.message_file) {
     await openai.beta.assistants.files.create(metadata.assistant_id, {
@@ -277,11 +293,12 @@ const processFileUpload = async ({ req, res, file, metadata }) => {
       file_id: id ?? file_id,
       temp_file_id,
       bytes,
-      filepath: isAssistantUpload ? `https://api.openai.com/v1/files/${id}` : filepath,
+      filepath: isAssistantUpload ? `${openai.baseURL}/files/${id}` : filepath,
       filename: filename ?? file.originalname,
       context: isAssistantUpload ? FileContext.assistants : FileContext.message_attachment,
-      source,
       type: file.mimetype,
+      embedded,
+      source,
     },
     true,
   );
@@ -292,19 +309,26 @@ const processFileUpload = async ({ req, res, file, metadata }) => {
  * Retrieves and processes an OpenAI file based on its type.
  *
  * @param {Object} params - The params passed to the function.
- * @param {OpenAIClient} params.openai - The params passed to the function.
+ * @param {OpenAIClient} params.openai - The OpenAI client instance.
+ * @param {RunClient} params.client - The LibreChat client instance: either refers to `openai` or `streamRunManager`.
  * @param {string} params.file_id - The ID of the file to retrieve.
  * @param {string} params.basename - The basename of the file (if image); e.g., 'image.jpg'.
  * @param {boolean} [params.unknownType] - Whether the file type is unknown.
  * @returns {Promise<{file_id: string, filepath: string, source: string, bytes?: number, width?: number, height?: number} | null>}
  * - Returns null if `file_id` is not defined; else, the file metadata if successfully retrieved and processed.
  */
-async function retrieveAndProcessFile({ openai, file_id, basename: _basename, unknownType }) {
+async function retrieveAndProcessFile({
+  openai,
+  client,
+  file_id,
+  basename: _basename,
+  unknownType,
+}) {
   if (!file_id) {
     return null;
   }
 
-  if (openai.attachedFileIds?.has(file_id)) {
+  if (client.attachedFileIds?.has(file_id)) {
     return {
       file_id,
       // filepath: TODO: local source filepath?,
@@ -370,7 +394,7 @@ async function retrieveAndProcessFile({ openai, file_id, basename: _basename, un
    */
   const processAsImage = async (dataBuffer, fileExt) => {
     // Logic to process image files, convert to webp, etc.
-    const _file = await convertToWebP(openai.req, dataBuffer, 'high', `${file_id}${fileExt}`);
+    const _file = await convertToWebP(client.req, dataBuffer, 'high', `${file_id}${fileExt}`);
     const file = {
       ..._file,
       type: 'image/webp',

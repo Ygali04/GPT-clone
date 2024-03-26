@@ -1,7 +1,7 @@
 ---
 title: ⚙️ Environment Variables
 description: Comprehensive guide for configuring your application's environment with the `.env` file. This document is your one-stop resource for understanding and customizing the environment variables that will shape your application's behavior in different contexts.
-weight: -11
+weight: -12
 ---
 
 # .env File Configuration
@@ -29,16 +29,6 @@ For more info see:
 ---
 
 ## Server Configuration
-
-### Customization
-- Here you can change the app title and footer
-- Uncomment to add a custom footer.
-    - Uncomment and make empty "" to remove the footer.
-
-```bash
-APP_TITLE=LibreChat
-CUSTOM_FOOTER="My custom footer"
-```
 
 ### Port
 
@@ -116,6 +106,17 @@ UID=1000
 GID=1000
 ```
 
+### Configuration Path - `librechat.yaml`
+Specify an alternative location for the LibreChat configuration file. 
+You may specify an **absolute path**, a **relative path**, or a **URL**. The filename in the path is flexible and does not have to be `librechat.yaml`; any valid configuration file will work.
+
+> **Note**: If you prefer LibreChat to search for the configuration file in the root directory (which is the default behavior), simply leave this option commented out.
+
+```sh
+# To set an alternative configuration path or URL, uncomment the line below and replace it with your desired path or URL.
+# CONFIG_PATH="/your/alternative/path/to/config.yaml"
+```
+
 ## Endpoints
 In this section you can configure the endpoints and models selection, their API keys, and the proxy and reverse proxy settings for the endpoints that support it. 
 
@@ -128,6 +129,30 @@ ENDPOINTS=openAI,assistants,azureOpenAI,bingAI,chatGPTBrowser,google,gptPlugins,
 PROXY=
 ```
 
+- Titling is enabled by default for all Endpoints when initiating a conversation (proceeding the first AI response).
+    - Set to `false` to disable this feature.
+    - Not all endpoints support titling.
+    - You can configure this feature on an Endpoint-level using [the `librechat.yaml` config file](./custom_config.md)
+
+```bash
+TITLE_CONVO=true
+```
+
+### Known Endpoints - librechat.yaml
+- see: [AI Endpoints](./ai_endpoints.md)
+- see also: [Custom Configuration](./custom_config.md)
+
+```sh
+GROQ_API_KEY=
+SHUTTLEAI_KEY=
+OPENROUTER_KEY=
+MISTRAL_API_KEY=
+ANYSCALE_API_KEY=
+FIREWORKS_API_KEY=
+PERPLEXITY_API_KEY=
+TOGETHERAI_API_KEY=
+```
+
 ### Anthropic
 see: [Anthropic Endpoint](./ai_setup.md#anthropic)
 - You can request an access key from https://console.anthropic.com/
@@ -138,8 +163,17 @@ see: [Anthropic Endpoint](./ai_setup.md#anthropic)
 
 ```bash
 ANTHROPIC_API_KEY=user_provided
-ANTHROPIC_MODELS=claude-1,claude-instant-1,claude-2
+ANTHROPIC_MODELS=claude-3-opus-20240229,claude-3-sonnet-20240229,claude-2.1,claude-2,claude-1.2,claude-1,claude-1-100k,claude-instant-1,claude-instant-1-100k
 ANTHROPIC_REVERSE_PROXY=
+```
+
+- Titling is enabled by default but is configured with the environment variable 
+`TITLE_CONVO` for all Endpoints. The default model used for Anthropic titling is "claude-3-haiku-20240307". You can change it by uncommenting the following and setting the desired model. **(Optional)** 
+
+> **Note:** Must be compatible with the Anthropic Endpoint. Also, Claude 2 and Claude 3 models perform best at this task, with `claude-3-haiku` models being the cheapest.
+
+```bash
+ANTHROPIC_TITLE_MODEL=claude-3-haiku-20240307
 ```
 
 ### Azure
@@ -234,10 +268,10 @@ BINGAI_TOKEN=user_provided
 BINGAI_HOST=
 ```
 
-### ChatGPT
+<!-- ### ChatGPT
 see: [ChatGPT Free Access token](../configuration/ai_setup.md#chatgptbrowser)
 
-> **Warning**: To use this endpoint you'll have to set up your own reverse proxy. Here is the installation guide to deploy your own (based on [Ninja](https://github.com/gngpp/ninja)): **[Ninja Deployment Guide](../../features/ninja.md)**
+> **Warning**: To use this endpoint you'll have to set up your own reverse proxy.
 
 ```bash
 CHATGPT_REVERSE_PROXY=<YOUR-REVERSE-PROXY>
@@ -254,7 +288,7 @@ CHATGPT_REVERSE_PROXY=<YOUR-REVERSE-PROXY>
 ```bash
 CHATGPT_TOKEN=
 CHATGPT_MODELS=text-davinci-002-render-sha
-```
+``` -->
 
 ### Google
 Follow these instructions to setup the [Google Endpoint](./ai_setup.md#google)
@@ -309,14 +343,8 @@ DEBUG_OPENAI=false
 OPENAI_MODELS=gpt-3.5-turbo-0125,gpt-3.5-turbo-0301,gpt-3.5-turbo,gpt-4,gpt-4-0613,gpt-4-vision-preview,gpt-3.5-turbo-0613,gpt-3.5-turbo-16k-0613,gpt-4-0125-preview,gpt-4-turbo-preview,gpt-4-1106-preview,gpt-3.5-turbo-1106,gpt-3.5-turbo-instruct,gpt-3.5-turbo-instruct-0914,gpt-3.5-turbo-16k
 ```
 
-- Titling is enabled by default when initiating a conversation.
-    - Set to false to disable this feature.
-
-```bash
-TITLE_CONVO=true
-```
-
-- The default model used for titling by is gpt-3.5-turbo. You can change it by uncommenting the following and setting the desired model. **(Optional)** 
+- Titling is enabled by default but is configured with the environment variable 
+`TITLE_CONVO` for all Endpoints. The default model used for OpenAI titling is gpt-3.5-turbo. You can change it by uncommenting the following and setting the desired model. **(Optional)** 
 
 > **Note:** Must be compatible with the OpenAI Endpoint.
 
@@ -361,6 +389,10 @@ OPENAI_FORCE_PROMPT=true
 
 - Leave `ASSISTANTS_API_KEY=` blank to disable this endpoint
 - Set `ASSISTANTS_API_KEY=` to `user_provided` to allow users to provide their own API key from the WebUI
+
+```bash
+ASSISTANTS_API_KEY=user_provided
+```
 
 - Customize the available models, separated by commas, **without spaces**.
     - The first will be default.
@@ -514,6 +546,21 @@ See detailed instructions here: **[Stable Diffusion](../../features/plugins/stab
 SD_WEBUI_URL=http://host.docker.internal:7860
 ```
 
+### Tavily
+Get your API key here: [https://tavily.com/#api](https://tavily.com/#api)
+
+```bash
+TAVILY_API_KEY=
+```
+
+### Traversaal
+LLM-enhanced search tool.
+Get API key here: https://api.traversaal.ai/dashboard
+
+```bash
+TRAVERSAAL_API_KEY=
+```
+
 #### WolframAlpha
 See detailed instructions here: **[Wolfram Alpha](../../features/plugins/wolfram.md)**
 
@@ -602,7 +649,10 @@ REGISTRATION_VIOLATION_SCORE=1
 CONCURRENT_VIOLATION_SCORE=1
 MESSAGE_VIOLATION_SCORE=1
 NON_BROWSER_VIOLATION_SCORE=20
+ILLEGAL_MODEL_REQ_SCORE=5
 ```
+
+> Note: Non-browser access and Illegal model requests are almost always nefarious as it means a 3rd party is attempting to access the server through an automated script.
 
 #### Login and registration rate limiting.
 - `LOGIN_MAX`: The max amount of logins allowed per IP per `LOGIN_WINDOW`
@@ -840,4 +890,51 @@ Mail address for from field. It is **REQUIRED** to set a value here (even if it'
 
 ```bash
 EMAIL_FROM=noreply@librechat.ai 
+```
+### UI
+
+- **Help and FAQ button:** 
+
+Empty or commented `HELP_AND_FAQ_URL`, button enabled
+
+`HELP_AND_FAQ_URL=https://example.com`, button enabled and goes to `https://example.com`
+
+`HELP_AND_FAQ_URL=/`, button disabled
+
+```bash
+HELP_AND_FAQ_URL=
+```
+
+- **App title and footer:**
+
+Uncomment to add a custom footer
+
+Uncomment and make empty "" to remove the footer
+
+```bash
+APP_TITLE=LibreChat
+CUSTOM_FOOTER="My custom footer"
+```
+
+- **Birthday Hat:** Give the AI Icon a Birthday Hat 🥳
+
+> Will show automatically on February 11th (LibreChat's birthday)
+ 
+> Set this to `false` to disable the birthday hat
+
+> Set to `true` to enable all the time.
+
+```bash
+SHOW_BIRTHDAY_ICON=true
+```
+
+### Other
+
+- **Redis:** Redis support is experimental, you may encounter some problems when using it. 
+
+> If using Redis, you should flush the cache after changing any LibreChat settings
+
+```bash
+REDIS_URI=
+USE_REDIS=
 ```
