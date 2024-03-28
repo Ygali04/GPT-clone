@@ -526,6 +526,16 @@ export enum SettingsTabValues {
 }
 
 /**
+ * Enum for chat constants
+ */
+export enum chatConstants {
+  /**
+   * Max char limit for a message
+   */
+  MAX_CHAR_LIMIT = 2000,
+}
+
+/**
  * Enum for app-wide constants
  */
 export enum Constants {
