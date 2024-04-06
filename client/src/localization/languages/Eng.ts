@@ -8,6 +8,7 @@ export default {
   com_files_number_selected: '{0} of {1} file(s) selected',
   com_sidepanel_select_assistant: 'Select an Assistant',
   com_sidepanel_assistant_builder: 'Assistant Builder',
+  com_sidepanel_hide_panel: 'Hide Panel',
   com_sidepanel_attach_files: 'Attach Files',
   com_sidepanel_manage_files: 'Manage Files',
   com_assistants_capabilities: 'Capabilities',
@@ -45,6 +46,8 @@ export default {
   com_assistants_update_error: 'There was an error updating your assistant.',
   com_assistants_create_success: 'Successfully created',
   com_assistants_create_error: 'There was an error creating your assistant.',
+  com_ui_field_required: 'This field is required',
+  com_ui_download_error: 'Error downloading file. The file may have been deleted.',
   com_ui_attach_error_type: 'Unsupported file type for endpoint:',
   com_ui_attach_error_size: 'File size limit exceeded for endpoint:',
   com_ui_attach_error:

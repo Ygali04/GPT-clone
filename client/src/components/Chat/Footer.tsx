@@ -1,4 +1,5 @@
 import React from 'react';
+import { Constants } from 'librechat-data-provider';
 import { useGetStartupConfig } from 'librechat-data-provider/react-query';
 import { useLocalize } from '~/hooks';
 
@@ -37,8 +38,9 @@ export default function Footer() {
         config.customFooter
       ) : (
         <>
+          {'Bruin Bot. Powered by: '}
           <a href="https://librechat.ai" target="_blank" rel="noreferrer" className="underline">
-            {config?.appTitle || 'LibreChat'} v0.6.10
+            {'LibreChat'} {Constants.VERSION}
           </a>
           {' - '} {localize('com_ui_new_footer')}
         </>

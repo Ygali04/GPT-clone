@@ -1,15 +1,15 @@
 import { useRecoilState } from 'recoil';
 import { useForm } from 'react-hook-form';
-import TextareaAutosize from 'react-textarea-autosize';
 import { memo, useCallback, useRef, useMemo } from 'react';
 import {
   supportsFiles,
+  EModelEndpoint,
   mergeFileConfig,
   fileConfig as defaultFileConfig,
-  EModelEndpoint,
 } from 'librechat-data-provider';
 import { useChatContext, useAssistantsMapContext } from '~/Providers';
 import { useRequiresKey, useTextarea } from '~/hooks';
+import { TextareaAutosize } from '~/components/ui';
 import { useGetFileConfig } from '~/data-provider';
 import { cn, removeFocusOutlines } from '~/utils';
 import AttachFile from './Files/AttachFile';
@@ -46,9 +46,9 @@ const ChatForm = ({ index = 0 }) => {
     setFiles,
     conversation,
     isSubmitting,
-    handleStopGenerating,
     filesLoading,
     setFilesLoading,
+    handleStopGenerating,
   } = useChatContext();
 
   const assistantMap = useAssistantsMapContext();
@@ -66,7 +66,9 @@ const ChatForm = ({ index = 0 }) => {
       setIsOverLimit(false);
       ask({ text: data.text });
       methods.reset();
-      textAreaRef.current?.setRangeText('', 0, data.text.length, 'end');
+      if (textAreaRef.current) {
+        textAreaRef.current.value = '';
+      }
     },
     [ask, methods],
   );

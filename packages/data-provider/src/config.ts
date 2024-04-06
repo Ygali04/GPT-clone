@@ -4,6 +4,7 @@ import { EModelEndpoint, eModelEndpointSchema } from './schemas';
 import { fileConfigSchema } from './file-config';
 import { FileSources } from './types/files';
 const SUPPORT_RETRIEVAL = false;
+import { TModelsConfig } from './types';
 
 export const defaultSocialLogins = ['google', 'facebook', 'openid', 'github', 'discord'];
 
@@ -151,6 +152,8 @@ export const endpointSchema = z.object({
   customOrder: z.number().optional(),
 });
 
+export type TEndpoint = z.infer<typeof endpointSchema>;
+
 export const azureEndpointSchema = z
   .object({
     groups: azureGroupConfigsSchema,
@@ -186,7 +189,7 @@ export const rateLimitSchema = z.object({
 
 export const configSchema = z.object({
   version: z.string(),
-  cache: z.boolean(),
+  cache: z.boolean().optional().default(true),
   interface: z
     .object({
       privacyPolicy: z
@@ -237,6 +240,7 @@ export enum KnownEndpoints {
   ollama = 'ollama',
   perplexity = 'perplexity',
   'together.ai' = 'together.ai',
+  cohere = 'cohere',
 }
 
 export enum FetchTokenConfig {
@@ -341,6 +345,23 @@ export const supportsRetrieval = SUPPORT_RETRIEVAL
     'gpt-3.5-turbo-1106',
   ])
   : new Set([]);
+const fitlerAssistantModels = (str: string) => {
+  return /gpt-4|gpt-3\\.5/i.test(str) && !/vision|instruct/i.test(str);
+};
+
+const openAIModels = defaultModels[EModelEndpoint.openAI];
+
+export const initialModelsConfig: TModelsConfig = {
+  initial: [],
+  [EModelEndpoint.openAI]: openAIModels,
+  [EModelEndpoint.assistants]: openAIModels.filter(fitlerAssistantModels),
+  [EModelEndpoint.gptPlugins]: openAIModels,
+  [EModelEndpoint.azureOpenAI]: openAIModels,
+  [EModelEndpoint.bingAI]: ['BingAI', 'Sydney'],
+  [EModelEndpoint.chatGPTBrowser]: ['text-davinci-002-render-sha'],
+  [EModelEndpoint.google]: defaultModels[EModelEndpoint.google],
+  [EModelEndpoint.anthropic]: defaultModels[EModelEndpoint.anthropic],
+};
 
 export const EndpointURLs: { [key in EModelEndpoint]: string } = {
   [EModelEndpoint.openAI]: `/api/ask/${EModelEndpoint.openAI}`,
@@ -542,7 +563,7 @@ export enum Constants {
   /**
    * Key for the app's version.
    */
-  VERSION = 'v0.6.10',
+  VERSION = 'v0.7.0',
   /**
    * Key for the Custom Config's version (librechat.yaml).
    */
@@ -551,6 +572,32 @@ export enum Constants {
    * Standard value for the first message's `parentMessageId` value, to indicate no parent exists.
    */
   NO_PARENT = '00000000-0000-0000-0000-000000000000',
+}
+
+/**
+ * Enum for Cohere related constants
+ */
+export enum CohereConstants {
+  /**
+   * Cohere API Endpoint, for special handling
+   */
+  API_URL = 'https://api.cohere.ai/v1',
+  /**
+   * Role for "USER" messages
+   */
+  ROLE_USER = 'USER',
+  /**
+   * Role for "SYSTEM" messages
+   */
+  ROLE_SYSTEM = 'SYSTEM',
+  /**
+   * Role for "CHATBOT" messages
+   */
+  ROLE_CHATBOT = 'CHATBOT',
+  /**
+   * Title message as required by Cohere
+   */
+  TITLE_MESSAGE = 'TITLE:',
 }
 
 export const defaultOrderQuery: {
