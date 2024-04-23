@@ -411,6 +411,7 @@ export const supportsBalanceCheck = {
 
 export const visionModels = [
   'gpt-4-vision',
+  'llava',
   'llava-13b',
   'gemini-pro-vision',
   'claude-3',
@@ -634,7 +635,7 @@ export enum Constants {
   /**
    * Key for the app's version.
    */
-  VERSION = 'v0.7.0',
+  VERSION = 'v0.7.1',
   /**
    * Key for the Custom Config's version (librechat.yaml).
    */
