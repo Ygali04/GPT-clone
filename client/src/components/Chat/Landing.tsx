@@ -99,6 +99,7 @@ export default function Landing({ Header }: { Header?: ReactNode }) {
           */}
           </div>
         </div>
+        <div className="text-center text-xl font-medium dark:text-white">Go Bruins!</div>
       </div>
     </div>
   );
