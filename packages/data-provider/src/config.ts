@@ -9,6 +9,7 @@ import { TModelsConfig } from './types';
 export const defaultSocialLogins = ['google', 'facebook', 'openid', 'github', 'discord'];
 
 export const defaultRetrievalModels = [
+  /*
   'gpt-4-turbo-preview',
   'gpt-3.5-turbo-0125',
   'gpt-4-0125-preview',
@@ -18,6 +19,7 @@ export const defaultRetrievalModels = [
   'gpt-4-turbo',
   'gpt-4-0125',
   'gpt-4-1106',
+  */
 ];
 
 export enum SettingsViews {
