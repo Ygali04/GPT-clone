@@ -18,21 +18,44 @@ export default function Settings({ open, onOpenChange }: TDialogProps) {
             {'Credits'}
           </DialogTitle>
         </DialogHeader>
-        <div className="px-6 pb-12">
+        <div className="px-6">
           <p className="text-sm text-gray-800 dark:text-gray-200">
-            This project is built upon LibreChat&apos;s open-source code. We extend our thanks to
-            all the members of the LibreChat community and particularly acknowledge the following
-            individuals whose contributions have made Bruin Bot possible:
+            This project is built upon{' '}
+            <a
+              href="https://librechat.ai/"
+              className="text-gray-800 underline dark:text-gray-200"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              LibreChat
+            </a>
+            &apos;s open-source code. We extend our thanks to all the members of the LibreChat
+            community and particularly acknowledge the following individuals whose contributions
+            have made Bruin Bot possible:
           </p>
-          <ul className="mt-4 list-disc pl-8 text-sm text-gray-800 dark:text-gray-200">
-            <li>Alex Chen</li>
-            <li>Yahvin Gali</li>
-            <li>Rohan Adwankar</li>
-            <li>Lavinia Lei</li>
-            <li>Brandon Tran</li>
-            <li>Abeni Liu</li>
-            <li>Alicia Liu</li>
-          </ul>
+          <div className="gap-4 md:grid md:grid-cols-2">
+            <div>
+              <p className="mt-4 pl-4 text-sm text-gray-800 dark:text-gray-200">Students:</p>
+              <ul className="mt-2 list-disc pl-8 text-sm text-gray-800 dark:text-gray-200">
+                <li>Alex Chen</li>
+                <li>Yahvin Gali</li>
+                <li>Rohan Adwankar</li>
+                <li>Lavinia Lei</li>
+                <li>Brandon Tran</li>
+                <li>Abeni Liu</li>
+                <li>Alicia Liu</li>
+                <li>Ivan Clyde Villacrusis</li>
+              </ul>
+            </div>
+            <div>
+              <p className="mt-4 pl-4 text-sm text-gray-800 dark:text-gray-200">Faculty:</p>
+              <ul className="mt-2 list-disc pl-8 text-sm text-gray-800 dark:text-gray-200">
+                <li>Professor Katsushi Arisaka</li>
+                <li>Mr. Cody Ashe-McNalley</li>
+                <li>Professor George Trammell</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
