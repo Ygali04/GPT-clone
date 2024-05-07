@@ -17,6 +17,7 @@ import { mainTextareaId } from '~/common';
 import StopButton from './StopButton';
 import SendButton from './SendButton';
 import FileRow from './Files/FileRow';
+import Mention from './Mention';
 import store from '~/store';
 import { chatConstants } from 'librechat-data-provider';
 import { useState } from 'react';
@@ -25,6 +26,9 @@ const ChatForm = ({ index = 0 }) => {
   const submitButtonRef = useRef<HTMLButtonElement>(null);
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
   const [showStopButton, setShowStopButton] = useRecoilState(store.showStopButtonByIndex(index));
+  const [showMentionPopover, setShowMentionPopover] = useRecoilState(
+    store.showMentionPopoverFamily(index),
+  );
   const { requiresKey } = useRequiresKey();
   const [isOverLimit, setIsOverLimit] = useState(false);
 
@@ -32,11 +36,12 @@ const ChatForm = ({ index = 0 }) => {
     defaultValues: { text: '' },
   });
 
-  const { handlePaste, handleKeyDown, handleCompositionStart, handleCompositionEnd } = useTextarea({
-    textAreaRef,
-    submitButtonRef,
-    disabled: !!requiresKey,
-  });
+  const { handlePaste, handleKeyDown, handleKeyUp, handleCompositionStart, handleCompositionEnd } =
+    useTextarea({
+      textAreaRef,
+      submitButtonRef,
+      disabled: !!requiresKey,
+    });
 
   const {
     ask,
@@ -107,6 +112,9 @@ const ChatForm = ({ index = 0 }) => {
       >
         <div className="relative flex h-full flex-1 items-stretch md:flex-col">
           <div className="flex w-full items-center">
+            {showMentionPopover && (
+              <Mention setShowMentionPopover={setShowMentionPopover} textAreaRef={textAreaRef} />
+            )}
             <div className="[&:has(textarea:focus)]:border-token-border-xheavy border-token-border-medium bg-token-main-surface-primary relative flex w-full flex-grow flex-col overflow-hidden rounded-2xl border dark:border-gray-600 dark:text-white [&:has(textarea:focus)]:shadow-[0_2px_6px_rgba(0,0,0,.05)] dark:[&:has(textarea:focus)]:border-gray-500">
               <FileRow
                 files={files}
@@ -129,6 +137,7 @@ const ChatForm = ({ index = 0 }) => {
                   disabled={disableInputs}
                   onPaste={handlePaste}
                   onKeyDown={handleKeyDown}
+                  onKeyUp={handleKeyUp}
                   onCompositionStart={handleCompositionStart}
                   onCompositionEnd={handleCompositionEnd}
                   id={mainTextareaId}
