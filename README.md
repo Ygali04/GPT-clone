@@ -8,7 +8,7 @@ This repository leverages the open source github repository LibreChat. The offic
 
 <p align="center">
   <a href="https://librechat.ai">
-    <img src="docs/assets/LibreChat.svg" height="256">
+    <img src="client/public/assets/logo.svg" height="256">
   </a>
   <h1 align="center">
     <a href="https://librechat.ai">LibreChat</a>
