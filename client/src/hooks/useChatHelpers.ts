@@ -238,7 +238,7 @@ export default function useChatHelpers(index = 0, paramId: string | undefined) {
         conversationId,
       },
       endpointOption,
-      message: {
+      userMessage: {
         ...currentMsg,
         generation,
         responseMessageId,
