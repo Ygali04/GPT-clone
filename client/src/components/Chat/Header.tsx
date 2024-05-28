@@ -4,10 +4,9 @@ import { getConfigDefaults } from 'librechat-data-provider';
 import { useGetStartupConfig } from 'librechat-data-provider/react-query';
 import type { ContextType } from '~/common';
 import { EndpointsMenu, ModelSpecsMenu, PresetsMenu, HeaderNewChat } from './Menus';
-import HeaderOptions from './Input/HeaderOptions';
-import ExportButton from './ExportButton';
-import ThemeOptions from './Input/ThemeOptions';
 import ExportAndShareMenu from './ExportAndShareMenu';
+import HeaderOptions from './Input/HeaderOptions';
+import ThemeOptions from './Input/ThemeOptions';
 
 const defaultInterface = getConfigDefaults().interface;
 
