@@ -22,7 +22,9 @@ function Login() {
         Powered by LibreChat
       </a>
       {error && <ErrorMessage>{localize(getLoginError(error))}</ErrorMessage>}
-      {startupConfig?.emailLoginEnabled && <LoginForm onSubmit={login} />}
+      {startupConfig?.emailLoginEnabled && (
+        <LoginForm onSubmit={login} startupConfig={startupConfig} />
+      )}
       {startupConfig?.registrationEnabled && (
         <p className="my-4 text-center text-sm font-light text-gray-700 dark:text-white">
           {' '}
