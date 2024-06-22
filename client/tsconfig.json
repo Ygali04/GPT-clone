@@ -35,7 +35,8 @@
     "setupTests.js",
     "vite.config.ts",
     "env.d.ts",
-    "../vite.config.ts"
+    "../vite.config.ts",
+    "../config/translations/**/*"
   ],
   "references": [
     {
