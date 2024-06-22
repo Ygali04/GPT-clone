@@ -39,6 +39,7 @@ export default function Landing({ Header }: { Header?: ReactNode }) {
     'shadow-stroke relative flex h-full items-center justify-center rounded-full bg-white text-black';
 
   return (
+  // Commented stuff out below so that assistant name and description are displayed instead of "Go Bruins" all the time
   // <div className="relative h-full">
   //   <div className="absolute left-0 right-0">{Header && Header}</div>
   //   <div className="flex h-full flex-col items-center justify-center">
