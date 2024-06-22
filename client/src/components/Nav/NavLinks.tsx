@@ -49,7 +49,7 @@ function NavLinks() {
           <>
             <Menu.Button
               className={cn(
-                'group-ui-open:bg-gray-100 dark:group-ui-open:bg-gray-700 duration-350 mt-text-sm flex h-auto w-full items-center gap-2 rounded-lg p-2 text-sm transition-colors hover:bg-gray-100 dark:hover:bg-gray-800',
+                'group-ui-open:bg-[#202123] duration-350 mt-text-sm mb-1 flex w-full items-center gap-2.5 rounded-lg bg-[#FFB400]/95 px-2 py-1.5 transition-colors hover:bg-[#202123]',
                 open ? 'bg-gray-100 dark:bg-gray-800' : '',
               )}
               data-testid="nav-user"
