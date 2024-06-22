@@ -209,6 +209,7 @@ export default function useChatHelpers(index = 0, paramId: string | undefined) {
       unfinished: false,
       isCreatedByUser: false,
       isEdited: isEditOrContinue,
+      iconURL: convo.iconURL,
       error: false,
     };
 
