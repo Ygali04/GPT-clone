@@ -37,6 +37,7 @@ export default function Header() {
               className="pl-0"
             />
           )}
+          <ThemeOptions />
         </div>
         {!isSmallScreen && (
           <ExportAndShareMenu isSharedButtonEnabled={startupConfig?.sharedLinksEnabled ?? false} />
